@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   Int        @id @default(sequence())
+  userName String     @unique
+  email    String     @unique
+  password String
+  Comments Comments[]
+  Likes    Likes[]
+  Post     Post[]
+  image    Json
+}
+
+model Comments {
+  commentId  Int    @id @default(sequence())
+  comment    String
+  userUserId Int
+  postPostId Int?
+  Post       Post?  @relation(fields: [postPostId], references: [postId])
+  createdBy  User   @relation(fields: [userUserId], references: [userId])
+}
+
+model Post {
+  postId      Int        @id @default(sequence())
+  content     String
+  description String
+  usersUserId Int
+  tags        String[]
+  createdBy   User       @relation(fields: [usersUserId], references: [userId])
+  comments    Comments[]
+  Likes       Likes[]
+}
+
+model Likes {
+  likeId     Int  @id @default(sequence())
+  userUserId Int
+  postPostId Int
+  postId     Post @relation(fields: [postPostId], references: [postId])
+  userId     User @relation(fields: [userUserId], references: [userId])
+
+  @@unique([userUserId, postPostId])
+}
