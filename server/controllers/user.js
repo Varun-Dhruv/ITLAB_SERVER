@@ -41,8 +41,23 @@ const getUser = async (req, res) => {
         Comments: true,
         Likes: {
           select: {
-            postId: true,
-            
+            postId: {
+              select: {
+                postId: true,
+                createdBy: {
+                  select: {
+                    userId: true,
+                    userName: true,
+                    email: true,
+                  },
+                },
+                Likes: true,
+                comments: true,
+                content: true,
+                description: true,
+                tags: true,
+              },
+            },
           },
         },
         image: true,
