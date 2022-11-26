@@ -70,7 +70,19 @@ const getUser = async (req, res) => {
                   },
                 },
                 Likes: true,
-                comments: true,
+                comments: {
+                  select: {
+                    comment: true,
+                    Post: true,
+                    createdBy: {
+                      select: {
+                        image: true,
+                        userName: true,
+                        email: true,
+                      },
+                    },
+                  },
+                },
                 content: true,
                 description: true,
                 tags: true,
