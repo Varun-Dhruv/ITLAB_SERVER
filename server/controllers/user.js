@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
         userName: true,
         email: true,
         Post: true,
-        
+
         Comments: true,
         Likes: true,
       },
@@ -40,11 +40,11 @@ const getUser = async (req, res) => {
         Post: true,
         Comments: true,
         Likes: {
-          select:{
-          postId:true,
-          }
+          select: {
+            postId: true,
+          },
         },
-        image:true,
+        image: true,
       },
     });
     if (user) return res.status(200).send(user);
@@ -57,36 +57,33 @@ const getUser = async (req, res) => {
 
 const signup = async (req, res) => {
   try {
-    const imageObject=await addImage(req.body.image);
-    req.body.image=imageObject;
-      const { error } = validateSignup(req.body);
-      if (error) {
-        return res.status(400).send({ message: error.details[0].message });
-      }
-      const user = await prisma.User.findMany({
-        where: {
-          OR: [
-            { email: req.body.email },
-            { userName: req.body.userName }
-          ]
-        }
-      });
-      if (user.length != 0) {
-        return res
-          .status(409)
-          .send({ message: "Admin with given Email already exists!" });
-      }
-      const hashPassword = await argon2.hash(req.body.password);
-      const data = { ...req.body, password: hashPassword };
-      const newUser = await prisma.user.create({
-        data: data,
-      });
-      newUser.password = undefined;
-      const token = generateAuthToken(newUser);
-      res.status(201).send({
-        message: "User Created successfully",
-        data: { token: token, user: newUser },
-      });
+    const imageObject = await addImage(req.body.image);
+    req.body.image = imageObject;
+    const { error } = validateSignup(req.body);
+    if (error) {
+      return res.status(400).send({ message: error.details[0].message });
+    }
+    const user = await prisma.User.findMany({
+      where: {
+        OR: [{ email: req.body.email }, { userName: req.body.userName }],
+      },
+    });
+    if (user.length != 0) {
+      return res
+        .status(409)
+        .send({ message: "Admin with given Email already exists!" });
+    }
+    const hashPassword = await argon2.hash(req.body.password);
+    const data = { ...req.body, password: hashPassword };
+    const newUser = await prisma.user.create({
+      data: data,
+    });
+    newUser.password = undefined;
+    const token = generateAuthToken(newUser);
+    res.status(201).send({
+      message: "User Created successfully",
+      data: { token: token, user: newUser },
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: "Internal Server Error" });
@@ -125,41 +122,38 @@ const login = async (req, res, next) => {
   }
 };
 
-const editProfileImage=async(req,res,next)=>{
+const editProfileImage = async (req, res, next) => {
   try {
-    const user=await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
-        userId:(Number)(req.params.userId)
+        userId: Number(req.params.userId),
       },
     });
-    if(user){
-    let img=user.image;
-   // console.log(req.body.updatedImg)
-    let newImage=await addImage(req.body.updatedImg);
-    const updateImagePromise=prisma.user.update(
-      {
-        where:{
-         userId:Number(req.params.userId)
-        },data:
-        {image:newImage}
-      })
-    const delImagePromise=deleteImage(img.public_id);
-    await Promise.all([updateImagePromise,delImagePromise]);
-    res.status(202).send({message:"Profile updated Successfully"});
-    }
-    else{
-      res.status(404).send({message:"User Not Found"});
+    if (user) {
+      let img = user.image;
+      let newImage = await addImage(req.body.updatedImg);
+      const updateImagePromise = prisma.user.update({
+        where: {
+          userId: Number(req.params.userId),
+        },
+        data: { image: newImage },
+      });
+      const delImagePromise = deleteImage(img.public_id);
+      await Promise.all([updateImagePromise, delImagePromise]);
+      res.status(202).send({ message: "Profile updated Successfully" });
+    } else {
+      res.status(404).send({ message: "User Not Found", image: newImage });
     }
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
-}
+};
 
 module.exports = {
   getAllUsers,
   getUser,
   login,
   signup,
-  editProfileImage
+  editProfileImage,
 };
