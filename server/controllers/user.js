@@ -59,34 +59,34 @@ const signup = async (req, res) => {
   try {
     const imageObject=await addImage(req.body.image);
     req.body.image=imageObject;
-    const { error } = validateSignup(req.body);
-    if (error) {
-      return res.status(400).send({ message: error.details[0].message });
-    }
-    const user = await prisma.User.findMany({
-      where: {
-        OR: [
-          { email: req.body.email },
-          { userName: req.body.userName }
-        ]
+      const { error } = validateSignup(req.body);
+      if (error) {
+        return res.status(400).send({ message: error.details[0].message });
       }
-    });
-    if (user.length != 0) {
-      return res
-        .status(409)
-        .send({ message: "Admin with given Email already exists!" });
-    }
-    const hashPassword = await argon2.hash(req.body.password);
-    const data = { ...req.body, password: hashPassword };
-    const newUser = await prisma.user.create({
-      data: data,
-    });
-    newUser.password = undefined;
-    const token = generateAuthToken(newUser);
-    res.status(201).send({
-      message: "User Created successfully",
-      data: { token: token, user: newUser },
-    });
+      const user = await prisma.User.findMany({
+        where: {
+          OR: [
+            { email: req.body.email },
+            { userName: req.body.userName }
+          ]
+        }
+      });
+      if (user.length != 0) {
+        return res
+          .status(409)
+          .send({ message: "Admin with given Email already exists!" });
+      }
+      const hashPassword = await argon2.hash(req.body.password);
+      const data = { ...req.body, password: hashPassword };
+      const newUser = await prisma.user.create({
+        data: data,
+      });
+      newUser.password = undefined;
+      const token = generateAuthToken(newUser);
+      res.status(201).send({
+        message: "User Created successfully",
+        data: { token: token, user: newUser },
+      });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: "Internal Server Error" });
