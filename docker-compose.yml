@@ -4,18 +4,16 @@ services:
     image: 'redis:alpine'
     ports:
       - '6379:6379'
-    expose:
-      - 6379
   server:
     restart: on-failure
     build: ./server
     depends_on:
       - redis
     ports:
-      - '8000:8000'
+      - '81:8000'
   nginx:
     build: ./nginx
     ports:
-      - '80:80'
+      - '7000:80'
     depends_on:
       - server

@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
         userName: true,
         email: true,
         Post: true,
-
+        image: true,
         Comments: true,
         Likes: true,
       },

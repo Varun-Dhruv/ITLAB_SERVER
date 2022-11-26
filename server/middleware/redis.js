@@ -1,5 +1,5 @@
 const { createClient } = require("redis");
-const redis = createClient();
+const redis = createClient({ host: "redis", port: 6379 });
 
 // client.on("error", (err) => console.log("Redis Client Error", err));
 redis
