@@ -14,7 +14,13 @@ const getAllPosts = async (req, res, next) => {
           },
         },
         Likes: true,
-        comments: true,
+        comments: {
+          select: {
+            comment: true,
+            Post: true,
+            createdBy: true,
+          },
+        },
         content: true,
         description: true,
         tags: true,
@@ -57,7 +63,13 @@ const getPost = async (req, res, next) => {
           },
         },
         Likes: true,
-        comments: true,
+        comments: {
+          select: {
+            comment: true,
+            Post: true,
+            createdBy: true,
+          },
+        },
         content: true,
         description: true,
         tags: true,

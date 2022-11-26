@@ -16,7 +16,13 @@ const getAllUsers = async (req, res) => {
         email: true,
         Post: true,
         image: true,
-        Comments: true,
+        Comments: {
+          select: {
+            comment: true,
+            Post: true,
+            createdBy: true,
+          },
+        },
         Likes: true,
       },
     });
@@ -38,7 +44,13 @@ const getUser = async (req, res) => {
         userName: true,
         email: true,
         Post: true,
-        Comments: true,
+        Comments: {
+          select: {
+            comment: true,
+            Post: true,
+            createdBy: true,
+          },
+        },
         Likes: {
           select: {
             postId: {
