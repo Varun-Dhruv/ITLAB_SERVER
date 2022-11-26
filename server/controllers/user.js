@@ -48,7 +48,13 @@ const getUser = async (req, res) => {
           select: {
             comment: true,
             Post: true,
-            createdBy: true,
+            createdBy: {
+              select: {
+                image: true,
+                userName: true,
+                email: true,
+              },
+            },
           },
         },
         Likes: {

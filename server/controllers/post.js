@@ -18,7 +18,13 @@ const getAllPosts = async (req, res, next) => {
           select: {
             comment: true,
             Post: true,
-            createdBy: true,
+            createdBy: {
+              select: {
+                image: true,
+                userName: true,
+                email: true,
+              },
+            },
           },
         },
         content: true,
@@ -67,7 +73,13 @@ const getPost = async (req, res, next) => {
           select: {
             comment: true,
             Post: true,
-            createdBy: true,
+            createdBy: {
+              select: {
+                image: true,
+                userName: true,
+                email: true,
+              },
+            },
           },
         },
         content: true,
