@@ -42,6 +42,7 @@ const getUser = async (req, res) => {
         Likes: {
           select: {
             postId: true,
+            
           },
         },
         image: true,

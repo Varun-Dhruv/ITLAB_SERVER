@@ -11,14 +11,14 @@ const getAllPosts = async (req, res, next) => {
             userId: true,
             userName: true,
             email: true,
-          }
+          },
         },
         Likes: true,
-        comments:true,
+        comments: true,
         content: true,
         description: true,
         tags: true,
-      }
+      },
     });
     res.status(200).send({ Posts });
   } catch (error) {
@@ -27,25 +27,40 @@ const getAllPosts = async (req, res, next) => {
   }
 };
 
-const getPostsbyUsers=async(req,res,next)=>{
+const getPostsbyUsers = async (req, res, next) => {
   try {
-    const posts= await prisma.post.findMany({
-      where:{
-      usersUserId:(Number)(req.params.userUserId),
-      }
-    })
-    res.send({data:posts,message:"Sent"});
+    const posts = await prisma.post.findMany({
+      where: {
+        usersUserId: Number(req.params.userUserId),
+      },
+    });
+    res.send({ data: posts, message: "Sent" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: "Internal Server Error" });
   }
-}
+};
 const getPost = async (req, res, next) => {
   try {
     //console.log(req.user)
     const PostData = await prisma.post.findUnique({
       where: {
         postId: Number(req.query.id),
+      },
+      select: {
+        postId: true,
+        createdBy: {
+          select: {
+            userId: true,
+            userName: true,
+            email: true,
+          },
+        },
+        Likes: true,
+        comments: true,
+        content: true,
+        description: true,
+        tags: true,
       },
     });
     res.status(200).send({ PostData });
@@ -62,12 +77,12 @@ const addPost = async (req, res, next) => {
     if (error)
       return res.status(400).send({ message: error.details[0].message });
     //console.log(postData);
-    postData = { ...postData, usersUserId: req.user.userId }
+    postData = { ...postData, usersUserId: req.user.userId };
     const newPost = await prisma.post.create({
       data: postData,
     });
     //await new Post(postData).save();
-   return res.status(201).send({ message: "Post Created successfully" });
+    return res.status(201).send({ message: "Post Created successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: "Internal Server Error" });
@@ -106,30 +121,32 @@ const updatePost = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
   try {
-    const data = { userUserId: (Number)(req.user.userId), postPostId: (Number)(req.params.postPostId) }
+    const data = {
+      userUserId: Number(req.user.userId),
+      postPostId: Number(req.params.postPostId),
+    };
     const like = await prisma.likes.findFirst({
       where: data,
     });
 
     if (like) {
       await prisma.likes.delete({ where: { likeId: like.likeId } });
-    }
-    else {
+    } else {
       await prisma.likes.create({ data });
     }
     const Likes = await prisma.likes.findMany({
       where: {
         postPostId: Number(req.params.postPostId),
-      }
-    })
+      },
+    });
     return res.status(202).send({
-      Likes
+      Likes,
     });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: "Internal Server Error" });
   }
-}
+};
 const addComment = async (req, res, next) => {
   try {
     const data = req.body;
@@ -148,7 +165,7 @@ const addComment = async (req, res, next) => {
       },
       include: {
         createdBy: true,
-      }
+      },
     });
     res.status(201).send(comments);
   } catch (error) {
@@ -157,7 +174,7 @@ const addComment = async (req, res, next) => {
       message: "Internal Server Error",
     });
   }
-}
+};
 module.exports = {
   getAllPosts,
   getPost,
@@ -166,5 +183,5 @@ module.exports = {
   updatePost,
   likePost,
   addComment,
-  getPostsbyUsers
+  getPostsbyUsers,
 };

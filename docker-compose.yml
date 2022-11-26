@@ -12,7 +12,7 @@ services:
     depends_on:
       - redis
     ports:
-      - '81:8000'
+      - '8000:8000'
   nginx:
     build: ./nginx
     ports:
