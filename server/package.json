@@ -7,7 +7,7 @@
     "start:dev": "npx env-cmd --environments development nodemon",
     "start": "node index.js",
     "start:staging": "npx env-cmd --environments staging nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
