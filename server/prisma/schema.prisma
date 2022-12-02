@@ -47,3 +47,10 @@ model Likes {
 
   @@unique([userUserId, postPostId])
 }
+
+model Poems {
+  poemId  Int    @id @default(sequence())
+  title   String
+  content String
+  author  String
+}
