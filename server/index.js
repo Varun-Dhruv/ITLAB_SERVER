@@ -5,7 +5,7 @@ const userRoute = require("./routes/user");
 const postRoute = require("./routes/post");
 const poetRoute = require("./routes/poetry");
 const cors = require("cors");
-const { getCrawledData } = require("./controllers/poetry");
+const { getCrawledData, getPoetWithImage } = require("./controllers/poetry");
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -23,7 +23,7 @@ app.use("/api/poetry", poetRoute);
 
 app.listen(PORT, async () => {
   try {
-    getCrawledData();
+    getPoetWithImage();
     console.log(`Server running at port ${PORT}`);
   } catch (error) {
     console.error(error);

@@ -54,3 +54,8 @@ model Poems {
   content String
   author  String
 }
+
+model Author {
+  authorId   Int    @id @default(sequence())
+  authorName String
+}
